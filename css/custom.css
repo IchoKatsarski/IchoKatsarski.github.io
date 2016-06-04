@@ -1,0 +1,31 @@
+body {
+    background-image: url("../imgs/bg.png") !important;
+    background-color: #222;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: cover !important;
+    color: white;
+}
+.intro {
+	position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 0;
+    text-align: center;
+    -webkit-transform: translate(0%, -50%);
+    -moz-transform: translate(0%, -50%);
+    -ms-transform: translate(0%, -50%);
+    -o-transform: translate(0%, -50%);
+    transform: translate(0%, -50%);
+    padding: 0 15px;
+}
+.intro img {
+	height: 140px;
+}
+.social {
+    font-size: 2em;
+}
+.social a {
+    color: white;
+}

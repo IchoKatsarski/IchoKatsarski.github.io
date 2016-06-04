@@ -1,0 +1,3 @@
+[submodule "projects/proos-uni-project"]
+	path = projects/proos-uni-project
+	url = https://github.com/IchoKatsarski/proos-uni-project.git

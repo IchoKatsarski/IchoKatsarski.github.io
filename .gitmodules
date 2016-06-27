@@ -1,3 +1,6 @@
 [submodule "projects/proos-uni-project"]
 	path = projects/proos-uni-project
 	url = https://github.com/IchoKatsarski/proos-uni-project.git
+[submodule "projects/weather-app"]
+	path = projects/weather-app
+	url = https://github.com/IchoKatsarski/weather-app.git

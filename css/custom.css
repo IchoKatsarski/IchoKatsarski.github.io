@@ -1,11 +1,11 @@
 body {
-    background-image: url("../imgs/bg.png") !important;
+/*    background-image: url("../imgs/bg.png") !important;
     background-color: #222;
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
     background-position: 50% 50%;
     background-size: cover !important;
-    color: white;
+    color: white;*/
 }
 
 #status {
@@ -21,7 +21,8 @@ body {
 }
 
 #preloader {
-    background: #020407;
+    /*background: #020407;*/
+    background: white;
     bottom: 0;
     left: 0;
     position: fixed;
@@ -33,7 +34,7 @@ body {
 .intro {
 	position: absolute;
     width: 100%;
-    top: 50%;
+    top: 40%;
     left: 0;
     text-align: center;
     -webkit-transform: translate(0%, -50%);
@@ -47,14 +48,17 @@ body {
 	height: 140px;
 }
 .social {
-    font-size: 2em;
+   height: 60px;
 }
 .social a {
-    color: white;
+    font-size: 2em;
+    color: #00b4f2;
     transition: 0.2s;
     text-decoration: none; 
 }
 
 .social a:hover {
     color: #00B4F6;
+     font-size: 2.6em;
+
 }

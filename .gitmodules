@@ -1,9 +1,0 @@
-[submodule "projects/proos-uni-project"]
-	path = projects/proos-uni-project
-	url = https://github.com/IchoKatsarski/proos-uni-project.git
-[submodule "projects/weather-app"]
-	path = projects/weather-app
-	url = https://github.com/IchoKatsarski/weather-app.git
-[submodule "projects/NedsWorld"]
-	path = projects/NedsWorld
-	url = git@github.com:IchoKatsarski/NedsWorld.git

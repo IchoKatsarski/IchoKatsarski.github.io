@@ -1,4 +1,4 @@
-var renderer, scene, camera, composer, circle, skelet, particle, pivotPoint;
+var renderer, scene, camera, composer, circle, skelet, particle, pivotPoint, planet1, planet2, planet3;
 
 window.onload = function() {
   init();
@@ -15,7 +15,12 @@ function init() {
 
   scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+  var FOV = 65;
+  var WIDTH = window.innerWidth;
+  var HEIGHT = window.innerHeight;
+  var NEAR = 1;
+  var FAR = 10000;
+  camera = new THREE.PerspectiveCamera( FOV, WIDTH / HEIGHT, NEAR, FAR );
   camera.position.z = 400;
   scene.add(camera);
 
@@ -29,9 +34,9 @@ function init() {
 
 
   var geometry = new THREE.TetrahedronGeometry(3, 0);
-  var geom = new THREE.IcosahedronGeometry(5, 3);
+  var geom = new THREE.IcosahedronGeometry(5, 2);
 
-  var sph1 = new THREE.IcosahedronGeometry(2, 1);
+  var sph1 = new THREE.IcosahedronGeometry(2, 0);
   var sph2 = new THREE.IcosahedronGeometry(3, 1);
   var sph3 = new THREE.IcosahedronGeometry(4, 1);
 
@@ -53,6 +58,7 @@ function init() {
         color: 0xffffff,
         emissive:   0x933434,
         specular: 0xa04c4c,
+        shading: THREE.FlatShading,
         shininess: 5,
   });
 
@@ -89,9 +95,9 @@ function init() {
 
   var planet = new THREE.Mesh(geom, matVusic);
   planet.position.set(0, 0, 0);
-  var planet1 = new THREE.Mesh(sph1, mat);
-  var planet2 = new THREE.Mesh(sph2, matWire);
-  var planet3 = new THREE.Mesh(sph2, mat);
+  planet1 = new THREE.Mesh(sph1, mat);
+  planet2 = new THREE.Mesh(sph2, matWire);
+  planet3 = new THREE.Mesh(sph2, mat);
 
   planet.scale.x = planet.scale.y = planet.scale.z = 16;
   planet1.scale.x = planet1.scale.y = planet1.scale.z = 12;
@@ -146,8 +152,16 @@ function animate() {
   pivotPoint.rotation.y -= 0.0005;
   particle.rotation.x += 0.0000;
   particle.rotation.y -= 0.00040;
+  planet1.rotation.y += 0.00340;
+  planet2.rotation.y += 0.00340;
+  planet3.rotation.y += 0.00340;
   circle.rotation.x += 0.00000;
   circle.rotation.y += 0.0000;
+
+  var time = Date.now() * 0.0005;
+  circle.position.x = Math.cos( time * 2 ) * 3;
+	circle.position.y = Math.cos( time * 2 ) * 2;
+	circle.position.z = Math.cos( time * 3 ) * 2;
   // skelet.rotation.x -= 0.0010;
   // skelet.rotation.y += 0.0020;
   renderer.clear();

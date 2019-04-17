@@ -1,4 +1,4 @@
-var renderer, scene, camera, composer, circle, skelet, particle, pivotPoint, planet1, planet2, planet3;
+var renderer, scene, camera, composer, circle, skelet, particle, pivotPoint, planet1, planet2, planet3 ,tanFOV, windowHeight, FOV, WIDTH,HEIGHT, NEAR,FAR ;
 
 window.onload = function() {
   init();
@@ -15,12 +15,12 @@ function init() {
 
   scene = new THREE.Scene();
 
-  var FOV = 95;
-  var WIDTH = window.innerWidth;
-  var HEIGHT = window.innerHeight;
-  var NEAR = 1;
-  var FAR = 10000;
-  camera = new THREE.PerspectiveCamera( FOV, 16/9, NEAR, FAR );
+  FOV = 95;
+  WIDTH = window.innerWidth;
+  HEIGHT = window.innerHeight;
+  NEAR = 1;
+  FAR = 10000;
+  camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, NEAR, FAR );
   camera.position.z = 400;
   scene.add(camera);
 
@@ -49,7 +49,7 @@ function init() {
 
   var material = new THREE.MeshPhongMaterial({
     color: 0xffffff,
-    shading: THREE.FlatShading
+    flatShading: THREE.FlatShading
   });
 
   for (var i = 0; i < 500; i++) {
@@ -70,7 +70,7 @@ function init() {
 
   var mat = new THREE.MeshPhongMaterial({
     color: 0xeb4c5a,
-    shading: THREE.FlatShading,
+    flatShading: THREE.FlatShading,
     emissive: 0x933434,
     specular: 0xa04c4c,
     shininess: 2,
@@ -80,7 +80,7 @@ function init() {
 
   var matWire = new THREE.MeshPhongMaterial({
     color: 0xeb4c5a,
-    shading: THREE.FlatShading,
+    flatShading: THREE.FlatShading,
     emissive:   0x933434,
     specular: 0xa04c4c,
     shininess: 3,
@@ -146,13 +146,29 @@ function init() {
   scene.add(pivotPoint);
 
   window.addEventListener('resize', onWindowResize, false);
+  tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
+  windowHeight = window.innerHeight;
 
 };
+
+
 
 function onWindowResize() {
   // camera.aspect = window.innerWidth / window.innerHeight;
   // camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  // renderer.setSize(window.innerWidth, window.innerHeight);
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+
+      // adjust the FOV
+      camera.fov = ( 360 / Math.PI ) * Math.atan( tanFOV * ( window.innerHeight / windowHeight ) );
+
+      camera.updateProjectionMatrix();
+      camera.lookAt( scene.position );
+
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      renderer.render( scene, camera );
+
 }
 
 function animate() {

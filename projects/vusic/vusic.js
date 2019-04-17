@@ -15,12 +15,12 @@ function init() {
 
   scene = new THREE.Scene();
 
-  var FOV = 65;
+  var FOV = 95;
   var WIDTH = window.innerWidth;
   var HEIGHT = window.innerHeight;
   var NEAR = 1;
   var FAR = 10000;
-  camera = new THREE.PerspectiveCamera( FOV, WIDTH / HEIGHT, NEAR, FAR );
+  camera = new THREE.PerspectiveCamera( FOV, 16/9, NEAR, FAR );
   camera.position.z = 400;
   scene.add(camera);
 
@@ -73,7 +73,7 @@ function init() {
     shading: THREE.FlatShading,
     emissive: 0x933434,
     specular: 0xa04c4c,
-    shininess: 5,
+    shininess: 2,
     transparent: true,
     opacity: 0.8
   });
@@ -83,9 +83,9 @@ function init() {
     shading: THREE.FlatShading,
     emissive:   0x933434,
     specular: 0xa04c4c,
-    shininess: 5,
+    shininess: 3,
     wireframe: true,
-    wireframeLinewidth: 2,
+    wireframeLinewidth: 2
   });
   var textureLoader = new THREE.TextureLoader();
   textureLoader.load( "vsc.png", function ( map ) {
@@ -127,7 +127,7 @@ function init() {
   // circle.rotation.y = (Math.PI / 2)-0.0;
 
 
-  var ambientLight = new THREE.AmbientLight(0x70c2c7 );
+  var ambientLight = new THREE.AmbientLight(0xf1dce3);
   scene.add(ambientLight);
 
   var lights = [];
@@ -150,8 +150,8 @@ function init() {
 };
 
 function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+  // camera.aspect = window.innerWidth / window.innerHeight;
+  // camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 

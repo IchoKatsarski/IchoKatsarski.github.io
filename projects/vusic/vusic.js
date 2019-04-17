@@ -33,8 +33,14 @@ function init() {
   scene.add(particle);
 
 
+
+  var geom = new THREE.CircleGeometry( 4, 100 );
+  // var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+  // var circle = new THREE.Mesh( geometry, material );
+
+
   var geometry = new THREE.TetrahedronGeometry(3, 0);
-  var geom = new THREE.IcosahedronGeometry(5, 2);
+  // var geom = new THREE.IcosahedronGeometry(5, 6);
 
   var sph1 = new THREE.IcosahedronGeometry(2, 0);
   var sph2 = new THREE.IcosahedronGeometry(3, 1);
@@ -56,18 +62,20 @@ function init() {
 
   var matVusic = new THREE.MeshPhongMaterial({
         color: 0xffffff,
-        emissive:   0x933434,
-        specular: 0xa04c4c,
-        shading: THREE.FlatShading,
-        shininess: 5,
+        // emissive:   0x933434,
+        // specular: 0xa04c4c,
+        // shading: THREE.FlatShading,
+        // shininess: 5,
   });
 
   var mat = new THREE.MeshPhongMaterial({
     color: 0xeb4c5a,
     shading: THREE.FlatShading,
-    emissive:   0x933434,
+    emissive: 0x933434,
     specular: 0xa04c4c,
     shininess: 5,
+    transparent: true,
+    opacity: 0.8
   });
 
   var matWire = new THREE.MeshPhongMaterial({
@@ -77,10 +85,10 @@ function init() {
     specular: 0xa04c4c,
     shininess: 5,
     wireframe: true,
-    wireframeLinewidth: 3,
+    wireframeLinewidth: 2,
   });
   var textureLoader = new THREE.TextureLoader();
-  textureLoader.load( "vusic.jpg", function ( map ) {
+  textureLoader.load( "vsc.png", function ( map ) {
 					map.anisotropy = 90;
 					matVusic.map = map;
 					matVusic.needsUpdate = true;
@@ -115,10 +123,11 @@ function init() {
   // scene.add(pivotPoint);
 
   circle.add(planet);
-  circle.rotation.x = 0.1;
-  circle.rotation.y = (Math.PI / 2)+0.1;
+  circle.rotation.x = 0;
+  // circle.rotation.y = (Math.PI / 2)-0.0;
 
-  var ambientLight = new THREE.AmbientLight(0x999999 );
+
+  var ambientLight = new THREE.AmbientLight(0x70c2c7 );
   scene.add(ambientLight);
 
   var lights = [];
@@ -128,7 +137,7 @@ function init() {
   lights[1].position.set( 0.75, 1, 0.5 );
   lights[2] = new THREE.DirectionalLight( 0xbd3a0f, 1 );
   lights[2].position.set( -0.75, -1, 0.5 );
-  lights[2] = new THREE.DirectionalLight( 0x4085e0, 1 );
+  lights[2] = new THREE.DirectionalLight( 0xa60943, 0.31 );
   lights[2].position.set( 0.75, -1, 0.5 );
 
   scene.add( lights[0] );

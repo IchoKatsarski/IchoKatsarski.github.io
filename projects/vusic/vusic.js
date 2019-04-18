@@ -39,10 +39,10 @@ function init() {
   // var circle = new THREE.Mesh( geometry, material );
 
 
-  var geometry = new THREE.TetrahedronGeometry(3, 0);
+  var geometry = new THREE.TetrahedronGeometry(3, 1);
   // var geom = new THREE.IcosahedronGeometry(5, 6);
 
-  var sph1 = new THREE.IcosahedronGeometry(2, 0);
+  var sph1 = new THREE.IcosahedronGeometry(2, 2);
   var sph2 = new THREE.IcosahedronGeometry(3, 1);
   var sph3 = new THREE.IcosahedronGeometry(4, 1);
 
@@ -72,20 +72,30 @@ function init() {
     color: 0xeb4c5a,
     flatShading: THREE.FlatShading,
     emissive: 0x933434,
+    specular: 0xDB5639,
+    shininess: 10,
+    transparent: false,
+    opacity: 1
+  });
+
+  var matWhite = new THREE.MeshPhongMaterial({
+    color: 0xff4c5a,
+    flatShading: THREE.FlatShading,
+    emissive: 0x933434,
     specular: 0xa04c4c,
-    shininess: 2,
+    shininess: 0,
     transparent: true,
     opacity: 0.8
   });
 
   var matWire = new THREE.MeshPhongMaterial({
-    color: 0xeb4c5a,
+    // color: 0xeb4c5a,
     flatShading: THREE.FlatShading,
-    emissive:   0x933434,
-    specular: 0xa04c4c,
-    shininess: 3,
+    // emissive:   0x933434,
+    // specular: 0xa04c4c,
+    // shininess: 1,
     wireframe: true,
-    wireframeLinewidth: 2
+    wireframeLinewidth: 20
   });
   var textureLoader = new THREE.TextureLoader();
   textureLoader.load( "vsc.png", function ( map ) {
@@ -105,7 +115,7 @@ function init() {
   planet.position.set(0, 0, 0);
   planet1 = new THREE.Mesh(sph1, mat);
   planet2 = new THREE.Mesh(sph2, matWire);
-  planet3 = new THREE.Mesh(sph2, mat);
+  planet3 = new THREE.Mesh(sph2, matWhite);
 
   planet.scale.x = planet.scale.y = planet.scale.z = 16;
   planet1.scale.x = planet1.scale.y = planet1.scale.z = 12;
@@ -137,12 +147,13 @@ function init() {
   lights[1].position.set( 0.75, 1, 0.5 );
   lights[2] = new THREE.DirectionalLight( 0xbd3a0f, 1 );
   lights[2].position.set( -0.75, -1, 0.5 );
-  lights[2] = new THREE.DirectionalLight( 0xa60943, 0.31 );
-  lights[2].position.set( 0.75, -1, 0.5 );
+  lights[3] = new THREE.DirectionalLight( 0xfffff, 1);
+  lights[3].position.set( 80, -30, 0.5 );
 
   scene.add( lights[0] );
   scene.add( lights[1] );
   scene.add( lights[2] );
+  scene.add( lights[3] );
   scene.add(pivotPoint);
 
   window.addEventListener('resize', onWindowResize, false);

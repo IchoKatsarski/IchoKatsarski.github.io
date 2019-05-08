@@ -6,23 +6,20 @@ var mic, fft;
 //   setup();
 //   animate();
 // }
-
-$("#component-1").click(function () {
+function start() {
   init();
   setup();
   animate();
   touchStarted();
-  // $(".div-button").fadeOut();
-});
-
+}
 function touchStarted() { getAudioContext().resume(); } 
 
-function setup(){
-  mic = new p5.AudioIn();
-  mic.start();
-  fft = new p5.FFT();
-  fft.setInput(mic);
-}
+  function setup(){
+    mic = new p5.AudioIn();
+    mic.start();
+    fft = new p5.FFT();
+    fft.setInput(mic);
+  }
 
 function init() {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });

@@ -1,16 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<link rel="stylesheet" type="text/css" href="main.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+	<link rel="stylesheet" type="text/css" href="css/main_codedrops.css" />
+	<link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
 </head>
- <script src="vusic.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.module.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.js"></script>
 <body>
 <div id="canvas"></div>
-<!-- <div class="header">
-	<h1> Vusic </h1>
-	<h4> View the music! Record! Share! <h4>
-</div> -->
+<div id="buttonDiv" class="div-button">
+	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg-filters">
+		<defs>
+			<filter id="filter-goo-1">
+				<feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
+				<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+				<feComposite in="SourceGraphic" in2="goo" />
+			</filter>
+		</defs>
+	</svg>
+	<button id="component-1" class="button button--1">
+		Click me
+		<span class="button__container">
+			<span class="circle top-left"></span>
+			<span class="circle top-left"></span>
+			<span class="circle top-left"></span>
+			<span class="button__bg"></span>
+			<span class="circle bottom-right"></span>
+			<span class="circle bottom-right"></span>
+			<span class="circle bottom-right"></span>
+		</span>
+	</button>
+</div>
 </body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.module.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/103/three.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.sound.min.js"></script>
+<script src="js/TweenMax.min.js"></script>
+<script src="js/buttons.js"></script>
+<script src="js/vusic.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
 </html>

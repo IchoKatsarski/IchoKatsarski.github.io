@@ -6,13 +6,16 @@ var mic, fft;
 //   setup();
 //   animate();
 // }
-function start() {
+
+$("#component-1").click(function () {
   init();
   setup();
   animate();
   touchStarted();
-}
-function touchStarted() { getAudioContext().resume(); } 
+  $(".div-button").fadeOut();
+});
+
+function touchStarted() { getAudioContext().resume(); }
 
   function setup(){
     mic = new p5.AudioIn();
@@ -111,7 +114,7 @@ function init() {
     // specular: 0xa04c4c,
     // shininess: 1,
     wireframe: true,
-    wireframeLinewidth: 20
+    wireframeLinewidth: 5
   });
   var textureLoader = new THREE.TextureLoader();
   textureLoader.load( "vsc.png", function ( map ) {
@@ -222,7 +225,7 @@ function animate() {
   particle.scale.y = (avrLow+10)/100;
   particle.scale.z = (avrLow+10)/100;
 
-  
+
 
   planet1.rotation.y += (avrHigh+1)/10000;
   planet2.rotation.x += (avrLow+1)/10000;

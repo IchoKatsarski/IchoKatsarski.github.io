@@ -211,9 +211,9 @@ function animate() {
   let high = spectrum.slice(768,1023);
 
   let avrLow = low.reduce((previous, current) => current += previous) / low.length;
-  let avrMidLow = low.reduce((previous, current) => current += previous) / midLow.length;
-  let avrMidHigh = low.reduce((previous, current) => current += previous) / midHigh.length;
-  let avrHigh = low.reduce((previous, current) => current += previous) / high.length;
+  let avrMidLow = midLow.reduce((previous, current) => current += previous) / midLow.length;
+  let avrMidHigh = midHigh.reduce((previous, current) => current += previous) / midHigh.length;
+  let avrHigh = high.reduce((previous, current) => current += previous) / high.length;
 
   // pivotPoint.rotation.y -= 0.0005;
   pivotPoint.rotation.y = (avrHigh+10)/1000
@@ -230,21 +230,33 @@ function animate() {
   planet1.rotation.y += (avrHigh+1)/10000;
   planet2.rotation.x += (avrLow+1)/10000;
 
-  planet1.scale.z = (avrLow+1)/10;
-  planet1.scale.x = (avrMidLow+1)/10;
-  planet1.scale.y = (avrHigh+1)/10;
+  // planet1.scale.z = (avrLow+1)/10;
+  // planet1.scale.x = (avrMidLow+1)/10;
+  // planet1.scale.y = (avrHigh+1)/10;
+  // planet1.position.set(82, -100, 200);  
 
-  planet2.scale.x = (avrLow+1)/10;
-  planet2.scale.y = (avrMidLow+1)/10;
-  planet2.scale.z = (avrHigh+1)/10;
+  // planet2.scale.x = (avrLow+1)/10;
+  // planet2.scale.y = (avrMidLow+1)/10;
+  // planet2.scale.z = (avrHigh+1)/10;
 
-  planet3.scale.y = (avrLow+1)/10;
-  planet3.scale.z = (avrMidLow+1)/10;
-  planet3.scale.x = (avrHigh+1)/10;
+  // planet3.scale.y = (avrLow+1)/10;
+  // planet3.scale.z = (avrMidLow+1)/10;
+  // planet3.scale.x = (avrHigh+1)/10;
 
+  var gradient = "rgba(" + Math.floor(avrLow) +"," + Math.floor(avrMidLow) + "," + Math.floor(avrHigh) + "," + 0.90 + "),rgba(" + Math.floor(avrHigh) + "," + Math.floor(avrMidHigh) + "," + Math.floor(avrLow)+ "," + 0.90 +")";
+  var gradient_percent =  "rgba(" + Math.floor(avrLow) +"," +Math.floor(avrMidLow) + "," + Math.floor(avrHigh) + "," + 0.90 + ") 0% ,rgba(" + Math.floor(avrHigh) + "," + Math.floor(avrMidHigh) + "," + Math.floor(avrLow)+ "," + 0.90 +") 100%";
+  console.log(gradient);
+  $("#body").css({
+    background: "linear-gradient(" + gradient_percent + ")"
+  });
+
+  planet1.position.set(82+(avrHigh+1), (avrLow+1), 200);
+  planet2.position.set(-120-(avrMidLow+1), 90+(avrHigh+1), 140);
+  planet3.position.set(210-(avrLow+1), 120+(avrHigh+1), -321);
 
   planet1.rotation.y += (avrMidHigh+1)/1000;
-  // planet3.rotation.y += 0.00340;
+  // planet3.rotation.y += 0.00340; 
+
 
   circle.rotation.x += 0.0000;
   circle.rotation.y += 0.0000;
@@ -254,9 +266,9 @@ function animate() {
 	circle.position.y = Math.cos( time * 2 ) * 2;
 	circle.position.z = Math.cos( time * 3 ) * 2;
 
-  circle.scale.x = (avrMidHigh+1)/100;
-  circle.scale.y = (avrMidHigh+1)/100;
-  circle.scale.z = (avrMidHigh+1)/100;
+  circle.scale.x = (avrLow+1)/100;
+  circle.scale.y = (avrLow+1)/100;
+  circle.scale.z = (avrLow+1)/100;
 
 
   // skelet.rotation.x -= 0.0010;

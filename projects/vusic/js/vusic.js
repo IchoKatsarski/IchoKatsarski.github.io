@@ -27,14 +27,14 @@ function touchStarted() { getAudioContext().resume(); }
 function init() {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio((window.devicePixelRatio) ? window.devicePixelRatio : 1);
-  renderer.setSize(window.innerWidth-20, window.innerHeight-50);
+  renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.autoClear = false;
   renderer.setClearColor(0x000000, 0.0);
   document.getElementById('canvas').appendChild(renderer.domElement);
 
   scene = new THREE.Scene();
 
-  FOV = 95;
+  FOV = 75;
   WIDTH = window.innerWidth;
   HEIGHT = window.innerHeight;
   NEAR = 1;
@@ -51,12 +51,9 @@ function init() {
   scene.add(circle);
   scene.add(particle);
 
-
-
   var geom = new THREE.CircleGeometry( 4, 100 );
   // var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
   // var circle = new THREE.Mesh( geometry, material );
-
 
   var geometry = new THREE.TetrahedronGeometry(3, 1);
   // var geom = new THREE.IcosahedronGeometry(5, 6);
@@ -65,10 +62,10 @@ function init() {
   var sph2 = new THREE.IcosahedronGeometry(3, 1);
   var sph3 = new THREE.IcosahedronGeometry(4, 1);
 
-
-  var material = new THREE.MeshPhongMaterial({
+  var material = window.matrl = new THREE.MeshPhongMaterial({
     color: 0xffffff,
-    flatShading: THREE.FlatShading
+    flatShading: THREE.FlatShading,
+    transparent: true
   });
 
   for (var i = 0; i < 500; i++) {
@@ -116,6 +113,7 @@ function init() {
     wireframe: true,
     wireframeLinewidth: 5
   });
+
   var textureLoader = new THREE.TextureLoader();
   textureLoader.load( "vsc.png", function ( map ) {
 					map.anisotropy = 90;
@@ -127,7 +125,6 @@ function init() {
     color: 0xffffff,
     wireframe: true,
     side: THREE.DoubleSide
-
   });
 
   var planet = new THREE.Mesh(geom, matVusic);
@@ -178,7 +175,6 @@ function init() {
   window.addEventListener('resize', onWindowResize, false);
   tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
   windowHeight = window.innerHeight;
-
 };
 
 
@@ -190,15 +186,14 @@ function onWindowResize() {
 
   camera.aspect = window.innerWidth / window.innerHeight;
 
-      // adjust the FOV
-      camera.fov = ( 360 / Math.PI ) * Math.atan( tanFOV * ( window.innerHeight / windowHeight ) );
+  // adjust the FOV
+  camera.fov = ( 360 / Math.PI ) * Math.atan( tanFOV * ( window.innerHeight / windowHeight ) );
 
-      camera.updateProjectionMatrix();
-      camera.lookAt( scene.position );
+  camera.updateProjectionMatrix();
+  camera.lookAt( scene.position );
 
-      renderer.setSize( window.innerWidth, window.innerHeight );
-      renderer.render( scene, camera );
-
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.render( scene, camera );
 }
 
 function animate() {
@@ -210,51 +205,51 @@ function animate() {
   let midHigh = spectrum.slice(512,768);
   let high = spectrum.slice(768,1023);
 
-  let avrLow = low.reduce((previous, current) => current += previous) / low.length;
-  let avrMidLow = midLow.reduce((previous, current) => current += previous) / midLow.length;
-  let avrMidHigh = midHigh.reduce((previous, current) => current += previous) / midHigh.length;
-  let avrHigh = high.reduce((previous, current) => current += previous) / high.length;
+  let avgLow = low.reduce((previous, current) => current += previous) / low.length;
+  let avgMidLow = midLow.reduce((previous, current) => current += previous) / midLow.length;
+  let avgMidHigh = midHigh.reduce((previous, current) => current += previous) / midHigh.length;
+  let avgHigh = high.reduce((previous, current) => current += previous) / high.length;
 
   // pivotPoint.rotation.y -= 0.0005;
-  pivotPoint.rotation.y = (avrHigh+10)/1000
-  particle.rotation.x += 0.0000;
+  pivotPoint.rotation.y = (avgHigh+10)/1000
+  // particle.rotation.x += 0.0000;
   particle.rotation.y -= 0.00040;
-  particle.rotation.y -= (avrLow+1)/10000;
+  particle.rotation.y -= avgMidLow * avgMidLow * 0.2 / 10000;
 
-  particle.scale.x = (avrLow+10)/100;
-  particle.scale.y = (avrLow+10)/100;
-  particle.scale.z = (avrLow+10)/100;
+  particle.scale.x = (avgLow+10)/100;
+  particle.scale.y = (avgLow+10)/100;
+  particle.scale.z = (avgLow+10)/100;
 
+  planet1.rotation.y += (avgHigh+1)/10000;
+  planet2.rotation.x += (avgLow+1)/10000;
 
+  matrl.opacity = Math.max(avgHigh / 128 - 0.1, 0);
 
-  planet1.rotation.y += (avrHigh+1)/10000;
-  planet2.rotation.x += (avrLow+1)/10000;
-
-  // planet1.scale.z = (avrLow+1)/10;
-  // planet1.scale.x = (avrMidLow+1)/10;
-  // planet1.scale.y = (avrHigh+1)/10;
+  // planet1.scale.z = (avgLow+1)/10;
+  // planet1.scale.x = (avgMidLow+1)/10;
+  // planet1.scale.y = (avgHigh+1)/10;
   // planet1.position.set(82, -100, 200);  
 
-  // planet2.scale.x = (avrLow+1)/10;
-  // planet2.scale.y = (avrMidLow+1)/10;
-  // planet2.scale.z = (avrHigh+1)/10;
+  // planet2.scale.x = (avgLow+1)/10;
+  // planet2.scale.y = (avgMidLow+1)/10;
+  // planet2.scale.z = (avgHigh+1)/10;
 
-  // planet3.scale.y = (avrLow+1)/10;
-  // planet3.scale.z = (avrMidLow+1)/10;
-  // planet3.scale.x = (avrHigh+1)/10;
+  // planet3.scale.y = (avgLow+1)/10;
+  // planet3.scale.z = (avgMidLow+1)/10;
+  // planet3.scale.x = (avgHigh+1)/10;
 
-  var gradient = "rgba(" + Math.floor(avrLow) +"," + Math.floor(avrMidLow) + "," + Math.floor(avrHigh) + "," + 0.90 + "),rgba(" + Math.floor(avrHigh) + "," + Math.floor(avrMidHigh) + "," + Math.floor(avrLow)+ "," + 0.90 +")";
-  var gradient_percent =  "rgba(" + Math.floor(avrLow) +"," +Math.floor(avrMidLow) + "," + Math.floor(avrHigh) + "," + 0.90 + ") 0% ,rgba(" + Math.floor(avrHigh) + "," + Math.floor(avrMidHigh) + "," + Math.floor(avrLow)+ "," + 0.90 +") 100%";
-  console.log(gradient);
+  var gradient = `rgba(${avgLow | 0}, ${avgMidLow | 0}, ${avgHigh | 0}, 0.90), rgba(${avgHigh | 0}, ${avgMidHigh | 0}, ${avgLow | 0}, 0.90)`;
+  var gradient_percent =  `rgba(${avgLow | 0}, ${avgMidLow | 0}, ${avgHigh | 0}, 0.90) 0%, rgba(${avgHigh | 0}, ${avgMidHigh | 0}, ${avgLow | 0}, 0.90) 100%`;
+  
   $("#body").css({
     background: "linear-gradient(" + gradient_percent + ")"
   });
 
-  planet1.position.set(82+(avrHigh+1), (avrLow+1), 200);
-  planet2.position.set(-120-(avrMidLow+1), 90+(avrHigh+1), 140);
-  planet3.position.set(210-(avrLow+1), 120+(avrHigh+1), -321);
+  planet1.position.set(82+(avgHigh+1), (avgLow+1), 200);
+  planet2.position.set(-120-(avgMidLow+1), 90+(avgHigh+1), 140);
+  planet3.position.set(210-(avgLow+1), 120+(avgHigh+1), -321);
 
-  planet1.rotation.y += (avrMidHigh+1)/1000;
+  planet1.rotation.y += (avgMidHigh+1)/1000;
   // planet3.rotation.y += 0.00340; 
 
 
@@ -266,9 +261,9 @@ function animate() {
 	circle.position.y = Math.cos( time * 2 ) * 2;
 	circle.position.z = Math.cos( time * 3 ) * 2;
 
-  circle.scale.x = (avrLow+1)/100;
-  circle.scale.y = (avrLow+1)/100;
-  circle.scale.z = (avrLow+1)/100;
+  circle.scale.x = (avgLow+1)/100;
+  circle.scale.y = (avgLow+1)/100;
+  circle.scale.z = (avgLow+1)/100;
 
 
   // skelet.rotation.x -= 0.0010;

@@ -64,7 +64,7 @@ function init() {
 
   var material = window.matrl = new THREE.MeshPhongMaterial({
     color: 0xffffff,
-    flatShading: THREE.FlatShading,
+    flatShading: true,
     transparent: true
   });
 
@@ -76,13 +76,46 @@ function init() {
     particle.add(mesh);
   }
 
-  var matVusic = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        // emissive:   0x933434,
-        // specular: 0xa04c4c,
-        // shading: THREE.FlatShading,
-        // shininess: 5,
-  });
+  // var matVusic = new THREE.MeshPhongMaterial({
+  //       color: 0xffffff,
+  //       // emissive:   0x933434,
+  //       // specular: 0xa04c4c,
+  //       // shading: THREE.FlatShading,
+  //       // shininess: 5,
+  // });
+
+  function torii() {
+    let material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+
+    let baseRadius = 30;
+    let baseTube = 4;
+
+    let geometry = new THREE.TorusGeometry( baseRadius, baseTube, 16, 100, 3 );
+    let torus = new THREE.Mesh( geometry, material );
+    torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
+    scene.add( torus );
+
+    let radiusStep = 7;
+    let tubeStep = 0.5;
+    let yStep = 4;
+    let x = [12, 23, 33, 42];
+   
+    for (let i = 1; i <= 3; i++) {
+      geometry = new THREE.TorusGeometry(baseRadius - radiusStep * i, baseTube - tubeStep * i, 16, 100, 3);
+      torus = new THREE.Mesh( geometry, material );
+      torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
+      scene.add( torus );
+      torus.position.set(-x[i - 1], -yStep * i, 0);
+
+      geometry = new THREE.TorusGeometry(baseRadius - radiusStep * i, baseTube - tubeStep * i, 16, 100, 3);
+      torus = new THREE.Mesh( geometry, material );
+      torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
+      scene.add( torus );
+      torus.position.set(x[i - 1], -yStep * i, 0);
+    }
+  }
+
+  torii();
 
   var mat = new THREE.MeshPhongMaterial({
     color: 0xeb4c5a,
@@ -114,12 +147,12 @@ function init() {
     wireframeLinewidth: 5
   });
 
-  var textureLoader = new THREE.TextureLoader();
-  textureLoader.load( "vsc.png", function ( map ) {
-					map.anisotropy = 90;
-					matVusic.map = map;
-					matVusic.needsUpdate = true;
-	} );
+ //  var textureLoader = new THREE.TextureLoader();
+ //  textureLoader.load( "vsc.png", function ( map ) {
+	// 				map.anisotropy = 90;
+	// 				matVusic.map = map;
+	// 				matVusic.needsUpdate = true;
+	// } );
 
   var mat2 = new THREE.MeshPhongMaterial({
     color: 0xffffff,
@@ -127,13 +160,13 @@ function init() {
     side: THREE.DoubleSide
   });
 
-  var planet = new THREE.Mesh(geom, matVusic);
-  planet.position.set(0, 0, 0);
+  // var planet = new THREE.Mesh(geom, matVusic);
+  // planet.position.set(0, 0, 0);
   planet1 = new THREE.Mesh(sph1, mat);
   planet2 = new THREE.Mesh(sph2, matWire);
   planet3 = new THREE.Mesh(sph2, matWhite);
 
-  planet.scale.x = planet.scale.y = planet.scale.z = 16;
+  // planet.scale.x = planet.scale.y = planet.scale.z = 16;
   planet1.scale.x = planet1.scale.y = planet1.scale.z = 12;
   planet2.scale.x = planet2.scale.y = planet2.scale.z = 12;
   planet3.scale.x = planet3.scale.y = planet3.scale.z = 12;
@@ -142,13 +175,13 @@ function init() {
   planet2.position.set(-120, 90, 140);
   planet3.position.set(210, 120, -321);
 
-  planet.add(pivotPoint);
-  pivotPoint.add(planet1);
-  pivotPoint.add(planet2);
-  pivotPoint.add(planet3);
+  // planet.add(pivotPoint);
+  // pivotPoint.add(planet1);
+  // pivotPoint.add(planet2);
+  // pivotPoint.add(planet3);
   // scene.add(pivotPoint);
 
-  circle.add(planet);
+  // circle.add(planet);
   circle.rotation.x = 0;
   // circle.rotation.y = (Math.PI / 2)-0.0;
 

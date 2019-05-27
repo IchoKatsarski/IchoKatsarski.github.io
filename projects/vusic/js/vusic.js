@@ -1,6 +1,8 @@
 var renderer, scene, camera, composer, circle, skelet, particle, pivotPoint, planet1, planet2, planet3 ,tanFOV, windowHeight, FOV, WIDTH,HEIGHT, NEAR,FAR ;
 var mic, fft;
 
+let torusList = [];
+
 // window.onload = function() {
 //   init();
 //   setup();
@@ -95,6 +97,8 @@ function init() {
     torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
     scene.add( torus );
 
+    torusList.push(torus);
+
     let radiusStep = 7;
     let tubeStep = 0.5;
     let yStep = 4;
@@ -106,12 +110,14 @@ function init() {
       torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
       scene.add( torus );
       torus.position.set(-x[i - 1], -yStep * i, 0);
+      torusList.unshift(torus);
 
       geometry = new THREE.TorusGeometry(baseRadius - radiusStep * i, baseTube - tubeStep * i, 16, 100, 3);
       torus = new THREE.Mesh( geometry, material );
       torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
       scene.add( torus );
       torus.position.set(x[i - 1], -yStep * i, 0);
+      torusList.push(torus);
     }
   }
 
@@ -298,10 +304,14 @@ function animate() {
   circle.scale.y = (avgLow+1)/100;
   circle.scale.z = (avgLow+1)/100;
 
+  torusList[0].scale.x = torusList[6].scale.x = avgHigh / 200 + 0.9;
+  torusList[1].scale.x = torusList[5].scale.x = avgMidHigh / 200 + 0.9;
+  torusList[2].scale.x = torusList[4].scale.x = avgMidLow / 200 + 0.9;
+  torusList[3].scale.x = avgLow / 200 + 0.9;
 
   // skelet.rotation.x -= 0.0010;
   // skelet.rotation.y += 0.0020;
   renderer.clear();
 
-  renderer.render( scene, camera )
+  renderer.render( scene, camera );
 };

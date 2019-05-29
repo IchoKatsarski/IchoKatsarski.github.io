@@ -1,7 +1,12 @@
 var renderer, scene, camera, composer, circle, skelet, particle, pivotPoint, planet1, planet2, planet3 ,tanFOV, windowHeight, FOV, WIDTH,HEIGHT, NEAR,FAR ;
 var mic, fft;
 
-let torusList = [];
+let torusList = [],
+    spectrumCanvas = null,
+    spectrumContext = null,
+    spectrumTex = null,
+    bgCanvas = null,
+    bgContext = null;
 
 // window.onload = function() {
 //   init();
@@ -33,6 +38,15 @@ function init() {
   renderer.autoClear = false;
   renderer.setClearColor(0x000000, 0.0);
   document.getElementById('canvas').appendChild(renderer.domElement);
+
+  bgCanvas = document.getElementById('back_canvas');
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+  bgContext = bgCanvas.getContext("2d");
+
+  createCanvas(window.innerWidth, window.innerHeight);
+
+  fillBackground(0, 0, 0, 0);
 
   scene = new THREE.Scene();
 
@@ -86,42 +100,9 @@ function init() {
   //       // shininess: 5,
   // });
 
-  function torii() {
-    let material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
-
-    let baseRadius = 30;
-    let baseTube = 4;
-
-    let geometry = new THREE.TorusGeometry( baseRadius, baseTube, 16, 100, 3 );
-    let torus = new THREE.Mesh( geometry, material );
-    torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
-    scene.add( torus );
-
-    torusList.push(torus);
-
-    let radiusStep = 7;
-    let tubeStep = 0.5;
-    let yStep = 4;
-    let x = [12, 23, 33, 42];
-   
-    for (let i = 1; i <= 3; i++) {
-      geometry = new THREE.TorusGeometry(baseRadius - radiusStep * i, baseTube - tubeStep * i, 16, 100, 3);
-      torus = new THREE.Mesh( geometry, material );
-      torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
-      scene.add( torus );
-      torus.position.set(-x[i - 1], -yStep * i, 0);
-      torusList.unshift(torus);
-
-      geometry = new THREE.TorusGeometry(baseRadius - radiusStep * i, baseTube - tubeStep * i, 16, 100, 3);
-      torus = new THREE.Mesh( geometry, material );
-      torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
-      scene.add( torus );
-      torus.position.set(x[i - 1], -yStep * i, 0);
-      torusList.push(torus);
-    }
-  }
-
   torii();
+
+  vis();
 
   var mat = new THREE.MeshPhongMaterial({
     color: 0xeb4c5a,
@@ -216,12 +197,176 @@ function init() {
   windowHeight = window.innerHeight;
 };
 
+function fillBackground(avgLow, avgMidLow, avgMidHigh, avgHigh) {
+  let grd = bgContext.createLinearGradient(0, 0, 0, window.innerHeight);
+  grd.addColorStop(0, `rgba(${avgLow | 0}, ${avgMidLow | 0}, ${avgHigh | 0}, 0.90)`);
+  grd.addColorStop(1, `rgba(${avgHigh | 0}, ${avgMidHigh | 0}, ${avgLow | 0}, 0.90)`);
 
+  bgContext.fillStyle = grd;
+  bgContext.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+  let waveform = fft.analyze();
+  let wave = { min: 0, max: 255 };
+
+  let step = 16;
+  let sampleCount = waveform.length / step;
+  let samples = [];
+
+  for (let i = 0; i < sampleCount; i++) {
+    samples.push(waveform.slice(i * step, i * step + step).reduce((sample, memo) => memo += sample) / step);
+  }
+
+  clear();
+
+  stroke(119,33,111,100);
+  fill(119,33,111,30);
+  // noFill();
+  strokeWeight(1);
+
+  function createShape(peak, pad) {
+    beginShape();
+    for (let i = 0; i < sampleCount; i++) {
+      let value = samples[i];
+
+      let x = map(i, 0, sampleCount - 1, -pad, window.innerWidth + pad);
+      let y = map(value, wave.min, wave.max, 0, peak);
+
+      curveVertex(x, window.innerHeight / 2 - y);
+    }
+
+    for (let i = sampleCount; i >= 0; i--) {
+      let value = samples[i];
+
+      let x = map(i, 0, sampleCount - 1, -pad, window.innerWidth + pad);
+      let y = map(value, wave.min, wave.max, 0, peak);
+
+      curveVertex(x, window.innerHeight / 2 + y);
+    }
+    endShape();
+  }
+
+  createShape(400, 90);
+  createShape(350, 86);
+  createShape(300, 82);
+  createShape(250, 78);
+  createShape(200, 74);
+  createShape(150, 70);
+}
+
+function torii() {
+  let material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+
+  let baseRadius = 30;
+  let baseTube = 4;
+
+  let geometry = new THREE.TorusGeometry( baseRadius, baseTube, 16, 100, 3 );
+  let torus = new THREE.Mesh( geometry, material );
+  torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
+  scene.add( torus );
+
+  torusList.push(torus);
+
+  let radiusStep = 7;
+  let tubeStep = 0.5;
+  let yStep = 4;
+  let x = [12, 23, 33, 42];
+ 
+  for (let i = 1; i <= 3; i++) {
+    geometry = new THREE.TorusGeometry(baseRadius - radiusStep * i, baseTube - tubeStep * i, 16, 100, 3);
+    torus = new THREE.Mesh( geometry, material );
+    torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
+    scene.add( torus );
+    torus.position.set(-x[i - 1], -yStep * i, 0);
+    torusList.unshift(torus);
+
+    geometry = new THREE.TorusGeometry(baseRadius - radiusStep * i, baseTube - tubeStep * i, 16, 100, 3);
+    torus = new THREE.Mesh( geometry, material );
+    torus.rotation.set(Math.PI / 2, Math.PI / 2, 0);
+    scene.add( torus );
+    torus.position.set(x[i - 1], -yStep * i, 0);
+    torusList.push(torus);
+  }
+}
+
+function vis() {
+  spectrumCanvas = document.createElement('canvas'),
+  spectrumContext = spectrumCanvas.getContext('2d');
+
+  spectrumCanvas.width = 1024;
+  spectrumCanvas.height = 1024;
+
+  // spectrumContext.strokeStyle = '#ff00ff';
+  // spectrumContext.strokeRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
+
+  spectrumTex = new THREE.CanvasTexture(spectrumCanvas);
+
+  var geometry = new THREE.PlaneGeometry();
+  var material = new THREE.MeshBasicMaterial( {map: spectrumTex} );
+  var plane = window.pln = new THREE.Mesh( geometry, material );
+  scene.add( plane );
+
+  plane.position.z = -300;
+
+  plane.scale.set(512, 512, 0.1);
+}
+
+function drawBars(spectrum) {
+  let c = spectrumCanvas;
+  let ctx = spectrumContext;
+
+  ctx.save();
+  ctx.clearRect(0, 0, c.width, c.height);
+
+  let barCount = 52;
+
+  ctx.translate(c.width / 2 + 0.5, c.height / 2 + 0.5);
+  ctx.fillStyle = "#fff";
+
+  let threshold = 10;
+
+  let bass = spectrum[1] | 0;
+  let radius = 0.20 * (c.width + bass);
+
+  let barLength = 256;
+  let barWidth = 3;
+
+  for (let i = 0; i < barCount; i++) {
+    let barIdx = map(i, 0, barCount, 0, spectrum.length) | 0;
+    let value = spectrum[barIdx];
+
+    if (value >= threshold) {
+      let barHeight = map(value, threshold, 256, 0, barLength)
+      ctx.fillRect(0, radius, barWidth, barHeight);
+    }
+
+    ctx.rotate((180 / barCount) * Math.PI/180);
+  }
+
+  for (let i = 0; i < barCount; i++) {
+    let barIdx = map(i, 0, barCount, 0, spectrum.length) | 0;
+    let value = spectrum[barIdx];
+
+    if (value >= threshold) {
+      let barHeight = map(value, threshold, 256, 0, barLength)
+      ctx.fillRect(0, radius, barWidth, barHeight);
+    }
+
+    ctx.rotate((180 / barCount) * Math.PI/180);
+  }
+
+  ctx.restore();
+}
 
 function onWindowResize() {
   // camera.aspect = window.innerWidth / window.innerHeight;
   // camera.updateProjectionMatrix();
   // renderer.setSize(window.innerWidth, window.innerHeight);
+
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+
+  resizeCanvas(window.innerWidth, window.innerHeight);
+  fillBackground(0, 0, 0, 0);
 
   camera.aspect = window.innerWidth / window.innerHeight;
 
@@ -262,7 +407,7 @@ function animate() {
   planet1.rotation.y += (avgHigh+1)/10000;
   planet2.rotation.x += (avgLow+1)/10000;
 
-  matrl.opacity = Math.max(avgHigh / 128 - 0.1, 0);
+  matrl.opacity = Math.max(avgHigh / 64 - 0.2, 0);
 
   // planet1.scale.z = (avgLow+1)/10;
   // planet1.scale.x = (avgMidLow+1)/10;
@@ -277,12 +422,14 @@ function animate() {
   // planet3.scale.z = (avgMidLow+1)/10;
   // planet3.scale.x = (avgHigh+1)/10;
 
-  var gradient = `rgba(${avgLow | 0}, ${avgMidLow | 0}, ${avgHigh | 0}, 0.90), rgba(${avgHigh | 0}, ${avgMidHigh | 0}, ${avgLow | 0}, 0.90)`;
-  var gradient_percent =  `rgba(${avgLow | 0}, ${avgMidLow | 0}, ${avgHigh | 0}, 0.90) 0%, rgba(${avgHigh | 0}, ${avgMidHigh | 0}, ${avgLow | 0}, 0.90) 100%`;
+  // var gradient = `rgba(${avgLow | 0}, ${avgMidLow | 0}, ${avgHigh | 0}, 0.90), rgba(${avgHigh | 0}, ${avgMidHigh | 0}, ${avgLow | 0}, 0.90)`;
+  // var gradient_percent =  `rgba(${avgLow | 0}, ${avgMidLow | 0}, ${avgHigh | 0}, 0.90) 0%, rgba(${avgHigh | 0}, ${avgMidHigh | 0}, ${avgLow | 0}, 0.90) 100%`;
   
-  $("#body").css({
-    background: "linear-gradient(" + gradient_percent + ")"
-  });
+  // $("#body").css({
+  //   background: "linear-gradient(" + gradient_percent + ")"
+  // });
+
+  fillBackground(avgLow, avgMidLow, avgMidHigh, avgHigh);
 
   planet1.position.set(82+(avgHigh+1), (avgLow+1), 200);
   planet2.position.set(-120-(avgMidLow+1), 90+(avgHigh+1), 140);
@@ -308,6 +455,9 @@ function animate() {
   torusList[1].scale.x = torusList[5].scale.x = avgMidHigh / 200 + 0.9;
   torusList[2].scale.x = torusList[4].scale.x = avgMidLow / 200 + 0.9;
   torusList[3].scale.x = avgLow / 200 + 0.9;
+
+  drawBars(spectrum);
+  spectrumTex.needsUpdate = true;
 
   // skelet.rotation.x -= 0.0010;
   // skelet.rotation.y += 0.0020;
